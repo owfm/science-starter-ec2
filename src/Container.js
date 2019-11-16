@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import Question from "./Question";
 import ChapterFilters from "./ChapterFilters";
 import uuidv1 from "uuid/v1";
@@ -34,9 +34,22 @@ const Container = ({ questions, chapters }) => {
   const [filters, setFilters] = useState([]);
   const [questionsToShow, setQuestionsToShow] = useState([]);
   const [showAnswers, setShowAnswers] = useState(false);
+  const [showChapterFilters, setShowChapterFilters] = useState(true);
 
   const generateQuestions = (filters = null) => {
     setQuestionsToShow(getRandomQuestions(questions, filters, 5));
+  };
+
+  useEffect(() => {
+    window.addEventListener("keypress", handleKeyPress);
+    return () => window.removeEventListener("keypress", handleKeyPress);
+  });
+
+  const handleKeyPress = ({ key }) => {
+    if (key === "a") setShowAnswers(prevState => !prevState);
+    if (key === "g") generateQuestions(filters);
+    if (key === "l") generateQuestions(); // lucky dip
+    if (key === "c") setShowChapterFilters(prevState => !prevState);
   };
 
   return (
@@ -49,7 +62,7 @@ const Container = ({ questions, chapters }) => {
           className={classes.button}
           onClick={() => generateQuestions(filters)}
         >
-          Generate!
+          <u>G</u>enerate!
         </Button>
         <Button
           variant="outlined"
@@ -57,7 +70,7 @@ const Container = ({ questions, chapters }) => {
           className={classes.button}
           onClick={() => generateQuestions()}
         >
-          Lucky Dip!
+          <u>L</u>ucky Dip!
         </Button>
 
         <Button
@@ -66,7 +79,18 @@ const Container = ({ questions, chapters }) => {
           color="secondary"
           className={classes.button}
         >
-          {showAnswers ? "Hide" : "Show"} Answers!
+          {showAnswers ? "Hide " : "Show "} <span>&nbsp;</span>
+          <u>A</u>nswers!
+        </Button>
+
+        <Button
+          onClick={() => setShowChapterFilters(prevState => !prevState)}
+          variant="outlined"
+          color="secondary"
+          className={classes.button}
+        >
+          {showChapterFilters ? "Hide " : "Show "} <span>&nbsp;</span>
+          <u>C</u>hapter List!
         </Button>
 
         <Button
@@ -83,6 +107,7 @@ const Container = ({ questions, chapters }) => {
       </div>
       <div>
         <ChapterFilters
+          visible={showChapterFilters}
           chapters={chapters}
           filters={filters}
           setFilters={setFilters}

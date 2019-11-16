@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import Container from "./Container";
 import Axios from "axios";
+import LoadingIcon from "./LoadingIcon";
 
 const DataController = () => {
   const [questions, setQuestions] = useState(null);
@@ -12,14 +13,11 @@ const DataController = () => {
         const response = await Axios.get(
           "https://k18vythvo2.execute-api.eu-west-2.amazonaws.com/dev/questions",
           {
-            // method: "get",
             headers: {
               "content-type": "application/json",
             },
-            // mode: "no-cors",
           }
         );
-        console.log(response.data);
         setQuestions([...response.data.data]);
         setChapters([...new Set(response.data.data.map(item => item.chapter))]);
       } catch (error) {
@@ -28,7 +26,8 @@ const DataController = () => {
     };
     fetchData();
   }, []);
-  if (!questions || !chapters) return <p>Loading data...</p>;
+  if (!questions || !chapters)
+    return <LoadingIcon type={"spin"} color={"palevioletred"} />;
   if (error) return <p>{error}</p>;
 
   return <Container questions={questions} chapters={chapters} />;
