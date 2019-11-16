@@ -99,6 +99,7 @@ const Container = ({ questions, chapters }) => {
           className={classes.button}
           onClick={() => {
             setFilters([]);
+            setShowChapterFilters(true);
             setQuestionsToShow([]);
           }}
         >
